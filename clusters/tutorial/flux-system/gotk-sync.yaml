@@ -1,0 +1,28 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  gitImplementation: libgit2
+  interval: 1m0s
+  ref:
+    branch: master
+  secretRef:
+    name: flux-ado-identity
+  timeout: 20s
+  url: ssh://git@github.com/hnts03/cvat-gitops.git 
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./clusters/tutorial
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system

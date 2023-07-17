@@ -1,0 +1,43 @@
+# save this under clusters/tutorial/cvat/cvat-released.yaml
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: cvat
+  namespace: cvat
+spec:
+  interval: 362m
+  url: https://kapernikov.github.io/cvat-helm/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: cvat
+  namespace: cvat
+spec:
+  install:
+    timeout: 25m
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+  interval: 361m
+  chart:
+    spec:
+      chart: cvat-helm
+      version: 0.1.6
+      sourceRef:
+        kind: HelmRepository
+        name: cvat
+      interval: 360m
+  values:
+    ingress:
+      host: cvat.kube-public
+      clusterIssuer: letsencrypt-prod
+    superUser:
+      create: true
+      username: admin
+      initialPassword: tutorial
+    volume:
+      data:
+        size: 40Gi
